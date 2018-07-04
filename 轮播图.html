@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>轮播图</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    #slider {
+      width: 520px;
+      height: 280px;
+      background: red;
+      margin: 100px auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #top {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    #slider #top #ul-img {
+      width: 2800px;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    #top ul li {
+      width: 520px;
+      height: 280px;
+      float: left;
+    }
+
+    img {
+      vertical-align: middle;
+    }
+
+    #slider #dot {
+      position: absolute;
+      right: 50%;
+      transform: translate(50%);
+      bottom: 10px;
+    }
+
+    #dot li {
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .current {
+      background: cyan !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="slider">
+    <div id="top">
+      <ul id="ul-img">
+        <li>
+          <img src="./images/goods01.jpg" alt="">
+        </li>
+        <li>
+          <img src="./images/goods02.jpg" alt="">
+        </li>
+        <li>
+          <img src="./images/goods03.jpg" alt="">
+        </li>
+      </ul>
+    </div>
+    <ul id="dot">
+    </ul>
+  </div>
+  <script src="./js/tools.js"></script>
+  <script>
+    var slider = document.getElementById('slider');
+    var ul = document.getElementById('ul-img');
+    var dot = document.getElementById('dot');
+    var list = ul.children; // 获取需要的标签
+    var currentIndex = 0,
+      indicatorIndex = 0;
+    // 克隆li标签
+    ul.appendChild(list[0].cloneNode(true));
+    // 动态创建页码
+    for (var i = 0; i < list.length - 1; i++) {
+      var li = document.createElement('li');
+      dot.appendChild(li);
+    }
+    // 默认选中第一个
+    dot.children[0].className = 'current';
+
+
+    // 鼠标进入圆点
+    var dotLis = dot.children;
+    for (var i = 0; i < dotLis.length; i++) {
+      (function (i) {
+        // 获得单独的li
+        var dotLi = dotLis[i];
+        // 鼠标进入
+        dotLi.onclick = function () {
+          for (var j = 0; j < dotLis.length; j++) {
+            dotLis[j].className = "";
+          }
+          this.className = "current";
+          // 滚动起来
+          currentIndex = indicatorIndex = i;
+          constant(ul, -(520 * i), 60);
+        }
+      })(i)
+    }
+
+    // 自动轮播
+    var timer = setInterval(autoPlay, 2000);
+
+    // 当鼠标移入，清除定时器
+    slider.onmouseover = function () {
+      clearInterval(timer); 
+    }
+    // 鼠标移除，重新开启定时器
+    slider.onmouseleave = function () {
+      timer = setInterval(autoPlay, 2000);
+    }
+
+    function autoPlay() {
+      // 图片滚动
+      currentIndex++;
+      if (currentIndex > list.length - 1) {
+        ul.style.left = 0;
+        currentIndex = 1;
+      }
+      constant(ul, -(currentIndex * 520), 60);
+      // 指示器滚动
+      indicatorIndex++;
+      if (indicatorIndex > dotLis.length - 1) {
+        indicatorIndex = 0;
+      }
+      for (var i = 0; i < dotLis.length; i++) {
+        dotLis[i].className = "";
+      }
+      dotLis[indicatorIndex].className = "current";
+    }
+  </script>
+</body>
+
+</html>
